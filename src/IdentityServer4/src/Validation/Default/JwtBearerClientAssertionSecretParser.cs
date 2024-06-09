@@ -110,9 +110,9 @@ namespace IdentityServer4.Validation
                 var jwt = new JwtSecurityToken(token);
                 return jwt.Subject;
             }
-            catch (Exception e)
+            catch (Exception /*e*/)
             {
-                _logger.LogWarning("Could not parse client assertion", e);
+                _logger.LogWarning("Could not parse client assertion"/*, e*/);
                 return null;
             }
         }

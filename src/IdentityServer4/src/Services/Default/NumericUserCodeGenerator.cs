@@ -40,29 +40,57 @@ namespace IdentityServer4.Services
             return Task.FromResult(next.ToString());
         }
 
+        //private int Next(int minValue, int maxValue)
+        //{
+        //    if (minValue > maxValue) throw new ArgumentOutOfRangeException(nameof(minValue));
+        //    if (minValue == maxValue) return minValue;
+        //    long diff = maxValue - minValue;
+
+        //    var uint32Buffer = new byte[8];
+
+        //    using (var rng = new RNGCryptoServiceProvider())
+        //    {
+        //        while (true)
+        //        {
+        //            rng.GetBytes(uint32Buffer);
+        //            var rand = BitConverter.ToUInt32(uint32Buffer, 0);
+
+        //            const long max = 1 + (long)uint.MaxValue;
+        //            var remainder = max % diff;
+        //            if (rand < max - remainder)
+        //            {
+        //                return (int)(minValue + rand % diff);
+        //            }
+        //        }
+        //    }
+        //}
+
         private int Next(int minValue, int maxValue)
         {
-            if (minValue > maxValue) throw new ArgumentOutOfRangeException(nameof(minValue));
-            if (minValue == maxValue) return minValue;
+            if (minValue > maxValue)
+                throw new ArgumentOutOfRangeException(nameof(minValue));
+            if (minValue == maxValue)
+                return minValue;
+
             long diff = maxValue - minValue;
+            byte[] uint32Buffer = new byte[4];
 
-            var uint32Buffer = new byte[8];
-
-            using (var rng = new RNGCryptoServiceProvider())
+            using (var rng = RandomNumberGenerator.Create())
             {
                 while (true)
                 {
                     rng.GetBytes(uint32Buffer);
-                    var rand = BitConverter.ToUInt32(uint32Buffer, 0);
+                    uint rand = BitConverter.ToUInt32(uint32Buffer, 0);
 
-                    const long max = 1 + (long)uint.MaxValue;
-                    var remainder = max % diff;
+                    const long max = 1L + uint.MaxValue;
+                    long remainder = max % diff;
                     if (rand < max - remainder)
                     {
-                        return (int)(minValue + rand % diff);
+                        return (int) (minValue + (rand % diff));
                     }
                 }
             }
         }
+
     }
 }
